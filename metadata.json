@@ -1,0 +1,8 @@
+
+{
+  "name": "Nova Portfolio - AI Enhanced Professional Showcase",
+  "description": "A high-end, responsive portfolio featuring interactive data visualizations, sleek glassmorphism UI, and an integrated Gemini-powered AI assistant to answer recruiter questions.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
