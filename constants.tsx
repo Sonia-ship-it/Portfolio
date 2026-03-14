@@ -9,9 +9,9 @@ export interface Achievement {
 
 export const PERSONAL_INFO = {
   name: 'Uwase Sonia',
-  role: 'Senior Full Stack Engineer',
+  role: 'Full Stack Engineer',
   tagline: 'Crafting digital experiences at the intersection of AI and Elegant Code.',
-  about: `I am a forward-thinking software architect with over 8 years of experience building scalable web applications. My passion lies in creating intuitive user interfaces backed by robust, high-performance systems. Recently, I've been integrating LLMs and generative AI into production workflows to push the boundaries of what's possible in the browser.`,
+  about: `I'm passionate about building technology that feels simple on the surface but powerful underneath. With interests spanning full-stack development, UI/UX design, and cybersecurity, I enjoy creating digital products that are intuitive, scalable, and secure. I believe great technology is not just built, it's carefully crafted to connect human creativity with the precision of machines.`,
   location: 'Kigali, Rwanda',
   email: 'uwasesonia43@gmail.com',
   github: 'https://github.com',
@@ -22,30 +22,61 @@ export const PERSONAL_INFO = {
 export const PROJECTS: Project[] = [
   {
     id: '1',
-    title: 'Hilink Travel app',
+    title: 'Hilink',
     description: 'A modern travel booking web application built with React and Tailwind CSS that helps users explore destinations, view travel packages, and plan trips through a clean, responsive interface..',
-    tags: ['Nextjs', 'TypeScript'],
+    tags: ['Nextjs', 'TypeScript', 'Tailwind CSS'],
     image: '/hilink.png',
     link: '#',
-    github: '#'
+    github: '#',
+    category: 'Frontend'
   },
   {
     id: '2',
+    title: 'UPS - Edgereach',
+    description: 'A fully integrated hotel operations system handling cost control, inventory management, POS, and finance. Automates workflows like purchasing, stock movement, recipe costing, and revenue tracking while providing dashboards for real-time insights and operational control.',
+    tags: ['Figma', 'Adobe XD', 'UI/UX Design'],
+    image: '/UPS.jpeg',
+    link: '#',
+    category: 'Design'
+  },
+  {
+    id: '3',
+    title: 'INN - Sync',
+    description: 'A hotel reservation and management platform that streamlines booking, room allocation, and payments. Designed for both guests and hotel staff, it ensures smooth operations with real-time updates and efficient management workflows.',
+    tags: ['Figma', 'Adobe XD', 'UI/UX Design'],
+    image: '/inn.jpeg',
+    link: '#',
+    category: 'Design'
+  },
+  {
+    id: '4',
+    title: 'SparkLock',
+    description: 'A smart lock management system that allows users to control and monitor property access remotely. Features include real-time notifications, secure authentication, and an intuitive web and mobile interface.',
+    tags: ['NestJS', 'SpringBoot', 'React Native', 'WebSocket'],
+    image: '/SP.jpeg',
+    link: '#',
+    github: '#',
+    category: 'Full Stack'
+  },
+  {
+    id: '5',
     title: 'Smart Library',
     description: 'A MERN-based Smart Library Management System featuring a responsive React + Tailwind UI and an Express/MongoDB backend, supporting real-time data handling, CRUD operations, and efficient library administration..',
     tags: ['React', 'Express', 'Tailwind', 'MongoDB'],
     image: '/smart-library.png',
     link: '#',
-    github: '#'
+    github: '#',
+    category: 'Full Stack'
   },
   {
-    id: '3',
+    id: '6',
     title: 'SaveIt',
     description: 'A smart savings and budgeting app that empowers users to take control of their finances by setting goals, tracking spending, and building healthy saving habits..',
     tags: ['PostgreSQL', 'React Native', 'Framer Motion', 'SpringBoot'],
     image: 'https://picsum.photos/seed/lumina/800/600',
     link: '#',
-    github: '#'
+    github: '#',
+    category: 'Full Stack'
   }
 ];
 
@@ -78,7 +109,7 @@ export const SKILLS: Skill[] = [
 
 export const EXPERIENCES: Experience[] = [
   {
-    company: 'INN-SYNC, Urban Park Suites and Other',
+    company: 'INN-SYNC, UPS -Edgereach and Other',
     position: 'Freelancer UI/UX Designer',
     period: '2026',
     description: [

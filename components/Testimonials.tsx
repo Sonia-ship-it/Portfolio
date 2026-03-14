@@ -18,23 +18,28 @@ const Testimonials: React.FC = () => {
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 {/* Header */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="flex flex-col items-center text-center mb-20"
-                >
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-[#0ED9D9] text-xs font-bold tracking-[0.2em] uppercase mb-4">
-                        <Quote size={14} className="rotate-180" />
-                        <span>Social Proof</span>
-                    </div>
-                    <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter mb-4">
-                        Trusted by <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0ED9D9] to-purple-500">Visionaries.</span>
-                    </h2>
-                    <p className="text-slate-500 max-w-xl text-lg">
-                        Collaborating with forward-thinking industry leaders to build the future of digital experiences.
-                    </p>
-                </motion.div>
+                <div className="text-center max-w-3xl mx-auto mb-20">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                        whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6 }}
+                        className="flex flex-col items-center"
+                    >
+                        <div className="inline-flex items-center justify-center p-3 w-16 h-16 bg-gradient-to-b from-slate-800 to-slate-900 rounded-2xl mb-8 border border-white/10 shadow-[0_0_30px_rgba(14,217,217,0.15)] relative group">
+                            <div className="absolute inset-0 bg-[#0ED9D9] blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-500 rounded-2xl" />
+                            <Quote className="w-8 h-8 text-[#0ED9D9] relative z-10" />
+                        </div>
+
+                        <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-6 tracking-tighter">
+                            Trusted by <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0ED9D9] to-blue-500">Visionaries</span>
+                        </h2>
+
+                        <p className="text-lg md:text-xl text-slate-400 font-normal leading-relaxed max-w-2xl">
+                            Collaborating with forward-thinking industry leaders to build the future of digital experiences.
+                        </p>
+                    </motion.div>
+                </div>
             </div>
 
             {/* Cinematic Slider Container */}

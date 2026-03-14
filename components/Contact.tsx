@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react';
 import { Mail, MapPin, Send, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { PERSONAL_INFO } from '../constants';
 import { motion, AnimatePresence } from 'framer-motion';
-import emailjs from '@emailjs/browser';
 
 const Contact: React.FC = () => {
   const formRef = useRef<HTMLFormElement>(null);
@@ -36,43 +35,39 @@ const Contact: React.FC = () => {
 
     setStatus('submitting');
 
-    // CONFIGURATION: Using Vite environment variables
-    // Please add VITE_EMAILJS_SERVICE_ID, VITE_EMAILJS_TEMPLATE_ID, and VITE_EMAILJS_PUBLIC_KEY to your .env.local
-    const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_xxxxxx';
-    const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_xxxxxx';
-    const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'YOUR_PUBLIC_KEY';
-
-    if (!import.meta.env.VITE_EMAILJS_PUBLIC_KEY || import.meta.env.VITE_EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
-      console.warn('EmailJS is not fully configured. Please set the environment variables in .env.local');
-    }
-
     try {
-      const templateParams = {
-        from_name: sanitize(formData.name),
-        reply_to: formData.email,
-        subject: sanitize(formData.subject),
-        message: sanitize(formData.message),
-        to_name: 'Sonia', // Recipient name
-      };
+      const submissionData = new FormData();
+      submissionData.append("name", sanitize(formData.name));
+      submissionData.append("email", formData.email);
+      submissionData.append("subject", sanitize(formData.subject));
+      submissionData.append("message", sanitize(formData.message));
+      submissionData.append("_captcha", "false");
 
-      await emailjs.send(
-        SERVICE_ID,
-        TEMPLATE_ID,
-        templateParams,
-        PUBLIC_KEY
-      );
+      const response = await fetch("https://formsubmit.co/ajax/34147a3f0cf3cde28447a39536975b6f", {
+        method: "POST",
+        body: submissionData,
+      });
 
-      setStatus('success');
-      setFormData({ name: '', email: '', subject: '', message: '' });
-      setTimeout(() => setStatus('idle'), 5000);
+      const result = await response.json();
+
+      // Check for both boolean true and string "true"
+      if (response.ok && (result.success === true || result.success === "true")) {
+        setStatus('success');
+        setFormData({ name: '', email: '', subject: '', message: '' });
+        setTimeout(() => setStatus('idle'), 5000);
+      } else {
+        throw new Error(result.message || 'Submission failed');
+      }
     } catch (err: any) {
-      console.error('EmailJS Error:', err);
+      console.error('Contact Error:', err);
       setStatus('error');
-      // If service is not configured yet, provide a helpful message
-      const errorMsg = err.text === 'The user_id parameter is required'
-        ? 'EmailJS Public Key is missing. Check setup guide.'
-        : (err.text || 'Submission failed');
-      setErrors(prev => ({ ...prev, submit: errorMsg }));
+      // Show the specific error to help with debugging
+      setErrors(prev => ({
+        ...prev,
+        submit: err.message && err.message !== 'Submission failed'
+          ? `Error: ${err.message}`
+          : 'Submission failed. Please check your internet or try again.'
+      }));
       setTimeout(() => setStatus('idle'), 5000);
     }
   };
@@ -103,7 +98,7 @@ const Contact: React.FC = () => {
             <div>
               <h2 className="text-[#0ED9D9] font-bold tracking-widest uppercase text-sm mb-4">Contact</h2>
               <h3 className="text-3xl md:text-5xl font-bold text-white mb-6">Let's work together.</h3>
-              <p className="text-slate-400 leading-relaxed max-w-md">
+              <p className="text-slate-400 leading-relaxed max-w-md font-normal">
                 Have a project in mind or just want to say hi? Feel free to reach out. I'm always open to discussing new projects, creative ideas or opportunities to be part of your visions.
               </p>
             </div>

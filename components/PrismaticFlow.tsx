@@ -7,7 +7,7 @@ const PrismaticFlow: React.FC = () => {
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
-        const ctx = canvas.getContext('2d', { alpha: false });
+        const ctx = canvas.getContext('2d', { alpha: true });
         if (!ctx) return;
 
         let width = window.innerWidth;
@@ -15,147 +15,92 @@ const PrismaticFlow: React.FC = () => {
         canvas.width = width;
         canvas.height = height;
 
-        let time = 0;
-        let mouseX = width / 2;
-        let mouseY = height / 2;
+        let particles: Particle[] = [];
+        let mouse = { x: -1000, y: -1000 };
+        let animationFrameId: number;
 
-        // Space Entity: Planet
-        const planet = {
-            x: width * 0.8,
-            y: height * 0.3,
-            radius: 120,
-            rotation: 0
-        };
+        class Particle {
+            x: number;
+            y: number;
+            vx: number;
+            vy: number;
+            size: number;
+            color: string;
 
-        // Space Entity: Shooting Stars
-        let shootingStars: { x: number, y: number, length: number, speed: number, opacity: number }[] = [];
-
-        // Stars & Data Dust
-        const stars: { x: number, y: number, size: number, opacity: number, blink: number, color: string }[] = [];
-        for (let i = 0; i < 400; i++) {
-            stars.push({
-                x: Math.random() * width,
-                y: Math.random() * height,
-                size: Math.random() * 1.5 + 0.2,
-                opacity: Math.random(),
-                blink: Math.random() * 0.02 + 0.01,
-                color: Math.random() > 0.8 ? '#0ED9D9' : '#ffffff'
-            });
-        }
-
-        // Flow Nodes (Cosmic Clouds)
-        const nodes: { x: number, y: number, vx: number, vy: number, color: string }[] = [
-            { x: width * 0.2, y: height * 0.2, vx: 0.2, vy: 0.1, color: '#0ED9D9' },
-            { x: width * 0.7, y: height * 0.8, vx: -0.1, vy: 0.2, color: '#a855f7' },
-            { x: width * 0.5, y: height * 0.5, vx: 0.1, vy: -0.15, color: '#3b82f6' }
-        ];
-
-        const animate = () => {
-            time += 0.005;
-            planet.rotation += 0.002;
-
-            // Background Fill (Deep Cinematic Black)
-            ctx.fillStyle = '#000000';
-            ctx.fillRect(0, 0, width, height);
-
-            // 1. Draw Nebula Clouds (Deep Moody Layers)
-            nodes.forEach((node, i) => {
-                node.x += node.vx + Math.sin(time + i) * 0.2;
-                node.y += node.vy + Math.cos(time + i) * 0.2;
-
-                if (node.x < 0 || node.x > width) node.vx *= -1;
-                if (node.y < 0 || node.y > height) node.vy *= -1;
-
-                const grad = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, width * 0.6);
-                grad.addColorStop(0, `${node.color}10`);
-                grad.addColorStop(0.5, `${node.color}02`);
-                grad.addColorStop(1, 'transparent');
-
-                ctx.globalCompositeOperation = 'screen';
-                ctx.fillStyle = grad;
-                ctx.fillRect(0, 0, width, height);
-            });
-
-            // 2. Draw Shooting Stars
-            if (Math.random() < 0.012) {
-                shootingStars.push({
-                    x: Math.random() * width,
-                    y: Math.random() * height,
-                    length: Math.random() * 80 + 20,
-                    speed: Math.random() * 12 + 8,
-                    opacity: 1
-                });
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.4;
+                this.vy = (Math.random() - 0.5) * 0.4;
+                this.size = Math.random() * 1.5 + 0.5;
+                this.color = Math.random() > 0.5 ? '#0ED9D9' : '#818CF8';
             }
 
-            ctx.globalCompositeOperation = 'source-over';
-            shootingStars = shootingStars.filter(ss => {
-                ss.x += ss.speed;
-                ss.y += ss.speed * 0.5;
-                ss.opacity -= 0.025;
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
 
-                if (ss.opacity <= 0) return false;
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
 
+                // Mouse attraction/repulsion
+                const dx = this.x - mouse.x;
+                const dy = this.y - mouse.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                if (distance < 150) {
+                    this.x += dx / 100;
+                    this.y += dy / 100;
+                }
+            }
+
+            draw() {
+                if (!ctx) return;
                 ctx.beginPath();
-                const grad = ctx.createLinearGradient(ss.x, ss.y, ss.x - ss.length, ss.y - ss.length * 0.5);
-                grad.addColorStop(0, `rgba(14, 217, 217, ${ss.opacity})`);
-                grad.addColorStop(1, 'transparent');
-                ctx.strokeStyle = grad;
-                ctx.lineWidth = 1.2;
-                ctx.moveTo(ss.x, ss.y);
-                ctx.lineTo(ss.x - ss.length, ss.y - ss.length * 0.5);
-                ctx.stroke();
-                return true;
-            });
-
-            // 3. Draw Twinkling Stars
-            stars.forEach(star => {
-                star.opacity += star.blink;
-                if (star.opacity > 1 || star.opacity < 0.2) star.blink *= -1;
-
-                const dx = star.x - mouseX;
-                const dy = star.y - mouseY;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                const drift = dist < 200 ? (1 - dist / 200) * 10 : 0;
-
-                ctx.beginPath();
-                ctx.arc(star.x + drift * 0.1, star.y + drift * 0.1, star.size, 0, Math.PI * 2);
-                ctx.fillStyle = star.color === '#ffffff' ? `rgba(255, 255, 255, ${star.opacity * 0.5})` : `rgba(14, 217, 217, ${star.opacity * 0.3})`;
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
                 ctx.fill();
-            });
+            }
+        }
 
-            // 4. Draw 3D-effect Planet (Cinematic Lighting)
-            const pX = planet.x + Math.sin(time * 0.3) * 15;
-            const pY = planet.y + Math.cos(time * 0.3) * 15;
-
-            // Planet Glow
-            const pGlow = ctx.createRadialGradient(pX, pY, planet.radius * 0.8, pX, pY, planet.radius * 2.5);
-            pGlow.addColorStop(0, 'rgba(14, 217, 217, 0.1)');
-            pGlow.addColorStop(1, 'transparent');
-            ctx.fillStyle = pGlow;
-            ctx.fillRect(pX - planet.radius * 2.5, pY - planet.radius * 2.5, planet.radius * 5, planet.radius * 5);
-
-            // Planet Body (Darker Base)
-            const pGrad = ctx.createRadialGradient(pX - 45, pY - 45, 5, pX, pY, planet.radius);
-            pGrad.addColorStop(0, '#111827');
-            pGrad.addColorStop(1, '#000000');
-            ctx.beginPath();
-            ctx.arc(pX, pY, planet.radius, 0, Math.PI * 2);
-            ctx.fillStyle = pGrad;
-            ctx.fill();
-
-            // Planet Atmosphere / Rim Light
-            ctx.beginPath();
-            ctx.arc(pX, pY, planet.radius, 0, Math.PI * 2);
-            ctx.strokeStyle = 'rgba(14, 217, 217, 0.25)';
-            ctx.lineWidth = 2.5;
-            ctx.stroke();
-
-            requestAnimationFrame(animate);
+        const init = () => {
+            particles = [];
+            const count = Math.min(Math.floor((width * height) / 10000), 150);
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle());
+            }
         };
 
-        const handleMouseMove = (e: MouseEvent) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
+        const drawLines = () => {
+            if (!ctx) return;
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 150) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(14, 217, 217, ${0.1 * (1 - distance / 150)})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        };
+
+        const animate = () => {
+            if (!ctx) return;
+            ctx.clearRect(0, 0, width, height);
+
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            drawLines();
+            animationFrameId = requestAnimationFrame(animate);
         };
 
         const handleResize = () => {
@@ -163,28 +108,37 @@ const PrismaticFlow: React.FC = () => {
             height = window.innerHeight;
             canvas.width = width;
             canvas.height = height;
-            planet.x = width * 0.8;
-            planet.y = height * 0.3;
+            init();
+        };
+
+        const handleMouseMove = (e: MouseEvent) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
         };
 
         window.addEventListener('resize', handleResize);
         window.addEventListener('mousemove', handleMouseMove);
+
+        init();
         animate();
 
         return () => {
             window.removeEventListener('resize', handleResize);
             window.removeEventListener('mousemove', handleMouseMove);
+            cancelAnimationFrame(animationFrameId);
         };
     }, []);
 
     return (
-        <div className="absolute inset-0 z-0 overflow-hidden bg-[#02040a]">
-            <canvas
-                ref={canvasRef}
-                className="absolute inset-0 opacity-100"
-            />
-            {/* Cinematic Noise Overlay */}
-            <div className="absolute inset-0 opacity-[0.05] pointer-events-none mix-blend-overlay" style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")' }} />
+        <div className="absolute inset-0 z-0 overflow-hidden bg-transparent pointer-events-none">
+            <canvas ref={canvasRef} className="absolute inset-0" />
+
+            {/* Glowing Orbs */}
+            <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#0ED9D9]/[0.05] rounded-full blur-[120px] animate-pulse" />
+            <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-purple-600/[0.05] rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }} />
+
+            {/* Mesh scanline effect */}
+            <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{ backgroundImage: 'linear-gradient(rgba(14, 217, 217, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(14, 217, 217, 0.1) 1px, transparent 1px)', backgroundSize: '100px 100px' }} />
         </div>
     );
 };

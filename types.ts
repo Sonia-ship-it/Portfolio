@@ -7,6 +7,7 @@ export interface Project {
   image: string;
   link: string;
   github?: string;
+  category?: 'Frontend' | 'Full Stack' | 'Figma Works' | string;
 }
 
 export interface Skill {
