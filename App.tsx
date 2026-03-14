@@ -11,6 +11,7 @@ import CustomCursor from './components/CustomCursor';
 import WhatsAppBtn from './components/WhatsAppBtn';
 import Testimonials from './components/Testimonials';
 import GlobalEffects from './components/GlobalEffects';
+import Footer from './components/Footer';
 import { PERSONAL_INFO } from './constants';
 
 const App: React.FC = () => {
@@ -35,7 +36,7 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen selection:bg-[#0ED9D9]/30 md:cursor-none relative">
+    <div className="min-h-screen selection:bg-[#0ED9D9]/30 md:cursor-none relative bg-[#02040a]">
       <GlobalEffects />
       <CustomCursor />
       <Header />
@@ -52,26 +53,7 @@ const App: React.FC = () => {
         <div className="reveal"><Contact /></div>
       </main>
 
-      <footer className="py-12 border-t border-white/5 bg-[#0a0f1d]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-8">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-[#0ED9D9] rounded-lg flex items-center justify-center font-bold text-slate-900">US</div>
-              <span className="text-white font-bold tracking-tight">Uwase Sonia</span>
-            </div>
-
-            <p className="text-slate-500 text-sm">
-              &copy; {new Date().getFullYear()} Uwase Sonia. Built with React.
-            </p>
-
-            <div className="flex items-center gap-6">
-              <a href={PERSONAL_INFO.github} className="text-slate-500 hover:text-white transition-colors">Github</a>
-              <a href={PERSONAL_INFO.linkedin} className="text-slate-500 hover:text-white transition-colors">LinkedIn</a>
-              <a href={PERSONAL_INFO.twitter} className="text-slate-500 hover:text-white transition-colors">Twitter</a>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
 
       <WhatsAppBtn />
     </div>

@@ -62,7 +62,7 @@ const ExperienceCard = ({ exp, index }: { exp: any, index: number }) => {
 
             <ul className="space-y-3">
               {exp.description.map((desc: string, i: number) => (
-                <li key={i} className={`flex gap-3 text-sm text-slate-400 leading-relaxed ${index % 2 !== 0 && 'md:flex-row-reverse md:text-right'}`}>
+                <li key={i} className={`flex gap-3 text-sm text-slate-400 leading-relaxed font-normal ${index % 2 !== 0 && 'md:flex-row-reverse md:text-right'}`}>
                   <span className="mt-2 w-1.5 h-1.5 rounded-full bg-[#0ED9D9] flex-shrink-0 animate-pulse" />
                   <span>{desc}</span>
                 </li>
@@ -102,16 +102,28 @@ const Experience: React.FC = () => {
       <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-600/5 blur-[120px] rounded-full" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-24"
-        >
-          <h2 className="text-[#0ED9D9] font-black tracking-[0.3em] uppercase text-xs mb-4">The Journey</h2>
-          <h3 className="text-4xl md:text-6xl font-black text-white tracking-tighter">Career Milestones</h3>
-        </motion.div>
+        <div className="text-center max-w-3xl mx-auto mb-20">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            whileInView={{ opacity: 1, scale: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="flex flex-col items-center"
+          >
+            <div className="inline-flex items-center justify-center p-3 w-16 h-16 bg-gradient-to-b from-slate-800 to-slate-900 rounded-2xl mb-8 border border-white/10 shadow-[0_0_30px_rgba(14,217,217,0.15)] relative group">
+              <div className="absolute inset-0 bg-[#0ED9D9] blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-500 rounded-2xl" />
+              <Briefcase className="w-8 h-8 text-[#0ED9D9] relative z-10" />
+            </div>
+
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-6 tracking-tighter">
+              Career <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0ED9D9] to-blue-500">Milestones</span>
+            </h2>
+
+            <p className="text-lg md:text-xl text-slate-400 font-normal leading-relaxed max-w-2xl">
+              A chronological journey through impactful roles, meaningful contributions, and continuous professional growth.
+            </p>
+          </motion.div>
+        </div>
 
         <div className="relative">
           {/* Sinuous Journey Path */}
